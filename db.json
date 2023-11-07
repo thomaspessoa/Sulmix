@@ -1,0 +1,44 @@
+{
+  "users": [
+    {
+      "email": "thomas@hotmail.com",
+      "id": 1,
+      "avatar_url": "https://i.pinimg.com/originals/a6/de/6d/a6de6d457bc4da659f18b435dd68992e.png",
+      "name": "Thomas Pessoa",
+      "perfil": "Motorista",
+      "telefone": "55999096533",
+      "transportadora": "sulmix"
+    },
+    {
+      "email": "frodo@hotmail.com",
+      "id": 2,
+      "avatar_url": "https://i.pinimg.com/originals/a6/de/6d/a6de6d457bc4da659f18b435dd68992e.png",
+      "name": "Tom Pessoa",
+      "perfil": "Motorista",
+      "telefone": "55999096533",
+      "transportadora": "DALEE"
+    }
+  ],
+  "entrega": [
+    {
+      "name": "Thomas Pessoa",
+      "placa": "55fet5g",
+      "telefone": "55999096533",
+      "transportadora": "sulmix"
+    }
+  ],
+  "coleta": [
+    {
+      "box": 2,
+      "cidade": "Restinga seca",
+      "cliente": "Josue",
+      "estado": "RS",
+      "idmMotorista": "43434",
+      "latitude": "423423536",
+      "longitude": "34534hj523",
+      "placa": "eeeeeeeeeeeeee",
+      "status": "entregue",
+      "transportadora": "amazon"
+    }
+  ]
+}
