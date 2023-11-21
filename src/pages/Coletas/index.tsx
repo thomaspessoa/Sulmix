@@ -12,7 +12,7 @@ export default function Coletas({navigation}) {
                     color={'#F6821F'}
                     fontweight={'bold'}
                     >
-
+                        
                         Coletas
                     </Titulo>
 

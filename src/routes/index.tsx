@@ -7,7 +7,7 @@ import Tabs from '../Tabs';
 const Tab = createNativeStackNavigator();
 
 
-
+import SplashScreen from '../pages/SplashScreen';
 import Login from '../pages/Login';
 import Cadastro from '../pages/Cadastro';
 import Checkin from '../pages/Checkin';
@@ -18,19 +18,28 @@ import AtualizarPerfil from '../pages/AtualizarPerfil';
 import AtivarLocalizacao from '../pages/AtivarLocalizacao';
 import GestaoUsuarios from '../pages/GestaoUsuarios';
 import CadastroUsuarios from '../pages/CadastroUsuarios';
-
+import SplashScreenCarregamento from '../pages/SplashScreenCarregamento';
 
 export default function Rotas() { 
     return(
         <NavigationContainer>
             <Tab.Navigator>
 
+            <Tab.Screen 
+                    name="SplashScreen" component={SplashScreen} options={{headerShown: false}}
+                />
+
                 <Tab.Screen 
                     name="Login" component={Login} options={{headerShown: false}}
                 />
 
+
                 <Tab.Screen 
                     name="Cadastro" component={Cadastro} options={{headerShown: false}}
+                />
+
+                <Tab.Screen 
+                    name="SplashScreenCarregamento" component={SplashScreenCarregamento} options={{headerShown: false}}
                 />
 
                 <Tab.Screen 

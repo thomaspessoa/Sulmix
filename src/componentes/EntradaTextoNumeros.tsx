@@ -9,7 +9,7 @@ interface InputProps {
   value?: string;
 }
 
-export function EntradaTexto({
+export function EntradaTextoNumeros({
   label,
   placeholder,
   onChange,
@@ -26,6 +26,7 @@ export function EntradaTexto({
         bgColor="gray.100"
         borderColor={"#F6821F"}
         shadow={3}
+        keyboardType="numeric"
         onChangeText={onChange ? (event) => onChange(event, label) : null}
       />
     </FormControl>

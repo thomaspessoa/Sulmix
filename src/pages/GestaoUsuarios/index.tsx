@@ -57,7 +57,7 @@ export default function GestaoUsuarios({navigation}) {
 
 
                     <SelectList 
-                     boxStyles={{borderBlockColor: 'black', borderColor: '#F6821F', borderBlockEndColor: '#F6821F', borderBlockStartColor:'#F6821F', backgroundColor: 'white'}}
+                    boxStyles={{borderBlockColor: 'black', borderColor: '#F6821F', borderBlockEndColor: '#F6821F', borderBlockStartColor:'#F6821F', backgroundColor: 'white'}}
                     placeholder='Perfil'
                     searchPlaceholder='Informe o perfil'
                     setSelected={(val) => setSelected(val)} 

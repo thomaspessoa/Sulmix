@@ -23,12 +23,7 @@ export default function Perfil(){
                 alignSelf={'center'} top={'-70'}/>
                 </Box>
             
-                
-
-
-
-
-                
+                                
                 <Titulo
                 fontSize='lg'
                 color='black'
@@ -72,9 +67,7 @@ export default function Perfil(){
                     top={'-55'}>
 
                     (55)-999096533
-                </Text>
-
-                
+                </Text>                
 
                 </VStack>
             </VStack>

@@ -1,20 +1,27 @@
 import {Text, Avatar, VStack, ScrollView,Image,Divider} from 'native-base'
 import Logo from '../assets/logo.png'
+import { getDoc,doc } from 'firebase/firestore';
+import { useEffect, useState } from "react";
+import { getFirestore } from 'firebase/firestore';
+import {app} from '../config/firebaseConfig'
+
 
 interface CardProps { 
     nome: string;
     foto: string;
     transportadora: string;
     funcao: string;
-}
+   
 
+}
 
 export function CardInicio({
     nome,
     foto,
     transportadora,
     funcao
-}:CardProps) { 
+    
+}:CardProps) {
 
 
     return (   

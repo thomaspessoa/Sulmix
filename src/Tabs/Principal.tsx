@@ -5,12 +5,11 @@ import Logo from '../assets/logo.png'
 import { TouchableOpacity } from 'react-native';
 
 export default function Principal({navigation}){
+    
 
-
-function msg() { 
-    console.log("clico botao")
-}
-
+    
+    function PrincipalScreen() {
+    }
     return(
         
         <ScrollView flex={1} p={1} bg={'#DDECFF'} marginTop={'-8%'}>    
@@ -20,8 +19,8 @@ function msg() {
             </VStack>
             
             <CardInicio 
-            nome='Thomas'
-            transportadora='Sulmix'
+            nome='Nome'
+            transportadora='Transportadora'
             funcao='Motorista'
             foto='https://i.pinimg.com/originals/a6/de/6d/a6de6d457bc4da659f18b435dd68992e.png'
             />
@@ -48,13 +47,15 @@ function msg() {
             icone='settings'
             />
 
-
+            {1==1 &&            
             <TouchableOpacity onPress={() => navigation.navigate('GestaoUsuarios')}> 
             <CardAcessoInicio 
             nome='Gestão de usuários'
             icone='people'
             />
-            </TouchableOpacity>
+            </TouchableOpacity> 
+            }
+
 
             
             <TouchableOpacity
@@ -94,6 +95,10 @@ function msg() {
             icone='archive'
             />
             </TouchableOpacity>
+
+
+
+
 
             <Button  onPress={() => navigation.navigate("Login")} 
             left={2}

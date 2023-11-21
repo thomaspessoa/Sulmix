@@ -8,11 +8,17 @@ import CheckinConfirmado from './pages/CheckinConfirmado';
 import Coletas from './pages/Coletas';
 import InformacoesCarregamento from './pages/InformacoesCarregamento';
 
+
 export default function App() {
   return (
+
     <NativeBaseProvider theme={TEMAS}>
-        <StatusBar backgroundColor={TEMAS.colors.blue[800]} />
-        <Rotas/>
+
+
+          <StatusBar backgroundColor={TEMAS.colors.blue[800]} />
+          <Rotas/>
+
+
     </NativeBaseProvider>
   );
 }
