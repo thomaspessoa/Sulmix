@@ -2,12 +2,7 @@
 import { NativeBaseProvider, StatusBar} from 'native-base';
 import { TEMAS } from './estilos/temas';
 import Rotas from './routes';
-import Checkin from './pages/Checkin';
-import Principal from './Tabs/Principal';
-import CheckinConfirmado from './pages/CheckinConfirmado';
-import Coletas from './pages/Coletas';
-import InformacoesCarregamento from './pages/InformacoesCarregamento';
-
+//import { AutenticacaoProvider } from './context/AutenticacaoContext';
 
 export default function App() {
   return (
@@ -16,7 +11,8 @@ export default function App() {
 
 
           <StatusBar backgroundColor={TEMAS.colors.blue[800]} />
-          <Rotas/>
+          
+            <Rotas/>
 
 
     </NativeBaseProvider>

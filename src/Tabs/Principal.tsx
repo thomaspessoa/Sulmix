@@ -32,7 +32,6 @@ export default function Principal({navigation}){
             />
     
             <TouchableOpacity
-             onPress={() => navigation.navigate('AtualizarPerfil')}
              activeOpacity={0.6}
              > 
             <CardAcessoInicio 
@@ -40,22 +39,6 @@ export default function Principal({navigation}){
             icone='stats-chart'
             />
             </TouchableOpacity>
-
-
-            <CardAcessoInicio 
-            nome='Administrar sistema'
-            icone='settings'
-            />
-
-            {1==1 &&            
-            <TouchableOpacity onPress={() => navigation.navigate('GestaoUsuarios')}> 
-            <CardAcessoInicio 
-            nome='Gestão de usuários'
-            icone='people'
-            />
-            </TouchableOpacity> 
-            }
-
 
             
             <TouchableOpacity

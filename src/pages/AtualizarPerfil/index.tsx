@@ -163,7 +163,7 @@ import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
                  
                 
                  <SelectList
-                boxStyles={{
+                  boxStyles={{
                   marginTop: '8%',
                   borderBlockColor: 'black',
                   borderColor: '#F6821F',

@@ -23,8 +23,6 @@ import { StyleSheet } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { KeyboardAvoidingView } from "native-base";
 
 export default function Cadastro({ navigation }) {
-  // const [numSecao, setNumeroSecao] = useState(0);
-  // const [registro, setRegistro] = useState({email: "", senha: "", confirmeSenha: ""});
 
 
   const [email,setEmail] = useState("");

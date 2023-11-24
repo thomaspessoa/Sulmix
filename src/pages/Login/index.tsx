@@ -7,12 +7,11 @@ import {
   FormControl,
   Input,
   Button,
-  Link,
   useToast,
   KeyboardAvoidingView,
   View,
-  ScrollView
-
+  ScrollView,
+  
 } from "native-base";
 import { Platform, TextInput, TouchableOpacity } from "react-native";
 import { Botao } from "../../componentes/Botão";
@@ -23,11 +22,14 @@ import { useEffect, useState } from "react";
 import { EntradaTextoSenha } from "../../componentes/EntradaTextoSenha";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../config/firebaseConfig";
 import { getFirestore } from 'firebase/firestore';
 import { getDoc,doc } from 'firebase/firestore';
 import { app} from '../../config/firebaseConfig'
 import SplashScreenCarregamento from "../SplashScreenCarregamento";
+import { auth } from "../../config/firebaseConfig";
+import { AuthContext } from "../../contexts/authContext";
+import React, { useContext } from 'react';
+
 
 export default function Login({ navigation }) {
   const [email,setEmail] = useState("");
@@ -35,30 +37,42 @@ export default function Login({ navigation }) {
   const toast = useToast()
   const [loginSuccess, setLoginSuccess] = useState(false);
   const db = getFirestore(app);
+
   const [user, setUser] = useState();
-  const [cep, setCep] = useState('');
-  const [pesCep, setPescep] = useState({});
-
-    const loginFirebase= async () => {
 
 
+
+  const loginFirebase= async () => {
+
+  //const { user, setUser} = useContext(AuthContext);
+
+    
+
+    // Está realizando o processo de autenticação de um usuário no Firebase 
     signInWithEmailAndPassword(auth, email, senha)
       .then(async (userCredential) => {
         const user = userCredential.user;
-  
+
         // Verifique se o usuário atualizou o perfil
         if (user.displayName) {
+
+
           // O usuário já atualizou o perfil, navegue até a página de abas (Tabs)
           setLoginSuccess(true);
           navigation.navigate('SplashScreenCarregamento');
   
+
+          // Toast de Login Realizado 
           toast.show({
             title: 'Login Realizado!',
             backgroundColor: '#0EDF23',
             fontSize: 'xs',
           });
+
+
           
         } else {
+
           // O usuário ainda não atualizou o perfil, navegue até a página de atualização do perfil
           setLoginSuccess(true);
           navigation.navigate('AtualizarPerfil');
@@ -70,6 +84,9 @@ export default function Login({ navigation }) {
           });
         }
       })
+
+
+      // Erros Do Usuario
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -96,6 +113,11 @@ export default function Login({ navigation }) {
       });
   };
 
+
+
+  
+   
+
 // Tela Login Sulmix 
   
 return (
@@ -109,7 +131,7 @@ return (
   >
     <ScrollView width={'100%'} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
       <Image source={Logo} alt="Logo Sulmix" width={"70%"} height={"20%"} alignSelf={'center'}/>
-      <Titulo> Faça o login em sua conta </Titulo>
+      <Titulo> Faça o login em sua conta</Titulo>
       <Box>
         <EntradaTexto
           label="Email"

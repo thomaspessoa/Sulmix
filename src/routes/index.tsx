@@ -16,9 +16,9 @@ import InformacoesColeta from '../pages/InformacoesColeta';
 import InformacoesCarregamento from '../pages/InformacoesCarregamento';
 import AtualizarPerfil from '../pages/AtualizarPerfil';
 import AtivarLocalizacao from '../pages/AtivarLocalizacao';
-import GestaoUsuarios from '../pages/GestaoUsuarios';
 import CadastroUsuarios from '../pages/CadastroUsuarios';
 import SplashScreenCarregamento from '../pages/SplashScreenCarregamento';
+import MinhasViagens from '../Tabs/MinhasViagens';
 
 export default function Rotas() { 
     return(
@@ -49,8 +49,16 @@ export default function Rotas() {
                 <Tab.Screen 
                     name="AtualizarPerfil" component={AtualizarPerfil} options={{headerShown: false}}
                 />
+
+
+
                 <Tab.Screen 
                     name="Checkin" component={Checkin} options={{headerShown: false}}
+                />
+
+
+                <Tab.Screen 
+                    name="MinhasViagens" component={MinhasViagens} options={{headerShown: false}}
                 />
                 
                 <Tab.Screen 
@@ -67,10 +75,6 @@ export default function Rotas() {
 
                 <Tab.Screen 
                     name="InformacoesColeta" component={InformacoesColeta} options={{headerShown: false}}
-                />
-
-                <Tab.Screen 
-                    name="GestaoUsuarios" component={GestaoUsuarios} options={{headerShown: false}}
                 />
 
                 <Tab.Screen 
