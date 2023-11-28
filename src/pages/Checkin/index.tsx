@@ -33,39 +33,94 @@ export default function Checkin({ navigation }) {
     try {
       const firestore = getFirestore();
       const colecaoViagens = collection(firestore, 'Viagens');
-
-      // Verifica se a placa já existe na coleção antes de adicionar
-      const querySnapshot = await getDocs(query(colecaoViagens, where('placa', '==', placa.placa)));
-      if (querySnapshot.size === 0) {
-        const dataAtual = new Date();
-        const dadosViagem = {
-          placa: placa.placa,
-          nome: usuario.nome ? usuario.nome.stringValue || '' : '',
-          status: 'Em Andamento ',
-          nomeTransportadora: usuario.Transportadora ? usuario.Transportadora.stringValue || '' : '',
-          data: format(dataAtual, 'dd/MM/yyyy'),
-          horario: format(dataAtual, 'HH:mm:ss'),
-          uid: usuario.uid,
-        };
-            
-        const novaViagemRef = await addDoc(colecaoViagens, dadosViagem);
-
-        console.log('Viagem adicionada com sucesso:', novaViagemRef.id);
-
-        toast.show({
-          title: 'Check-in Feito com Sucesso!',
-          backgroundColor: '#0EDF23',
-          fontSize: 'xs',
-        });
-
-        // Execute outras ações ou navegação conforme necessário
-        try {
-          await navigation.navigate("Minhas Viagens");
-        } catch (error) {
-          console.error('Erro ao navegar:', error);
+  
+      // Verifica se o usuário já possui uma viagem em andamento
+      const viagemAtualSnapshot = await getDocs(
+        query(
+          colecaoViagens,
+          where('uid', '==', usuario.uid),
+          where('status', '==', 'Em Andamento')
+        )
+      );
+  
+      if (viagemAtualSnapshot.size === 0) {
+        // Usuário não possui uma viagem em andamento, pode adicionar uma nova
+        const querySnapshot = await getDocs(query(colecaoViagens, where('placa', '==', placa.placa)));
+  
+        if (querySnapshot.size === 0) {
+          // Placa não existe, pode adicionar uma nova viagem
+          const dataAtual = new Date();
+          const dadosViagem = {
+            placa: placa.placa,
+            nome: usuario.nome ? usuario.nome.stringValue || '' : '',
+            status: 'Em Andamento',
+            transportadora: usuario.Transportadora ? usuario.Transportadora.stringValue || '' : '',
+            data: format(dataAtual, 'dd/MM/yyyy'),
+            horario: format(dataAtual, 'HH:mm:ss'),
+            uid: usuario.uid,
+          };
+  
+          const novaViagemRef = await addDoc(colecaoViagens, dadosViagem);
+  
+          console.log('Viagem adicionada com sucesso:', novaViagemRef.id);
+  
+          toast.show({
+            title: 'Check-in Feito com Sucesso!',
+            backgroundColor: '#0EDF23',
+            fontSize: 'xs',
+          });
+  
+          // Execute outras ações ou navegação conforme necessário
+          try {
+            await navigation.navigate("Minhas Viagens");
+          } catch (error) {
+            console.error('Erro ao navegar:', error);
+          }
+        } else {
+          // Placa já existe, verificar status da última viagem
+          const ultimaViagem = querySnapshot.docs[0].data();
+  
+          if (ultimaViagem.status === 'Entregue') {
+            // Status da última viagem é "Entregue", permitir criar uma nova viagem
+            const dataAtual = new Date();
+            const dadosViagem = {
+              placa: placa.placa,
+              nome: usuario.nome ? usuario.nome.stringValue || '' : '',
+              status: 'Em Andamento',
+              transportadora: usuario.Transportadora ? usuario.Transportadora.stringValue || '' : '',
+              data: format(dataAtual, 'dd/MM/yyyy'),
+              horario: format(dataAtual, 'HH:mm:ss'),
+              uid: usuario.uid,
+            };
+  
+            const novaViagemRef = await addDoc(colecaoViagens, dadosViagem);
+  
+            console.log('Viagem adicionada com sucesso:', novaViagemRef.id);
+  
+            toast.show({
+              title: 'Check-in Feito com Sucesso!',
+              backgroundColor: '#0EDF23',
+              fontSize: 'xs',
+            });
+  
+            // Execute outras ações ou navegação conforme necessário
+            try {
+              await navigation.navigate("Minhas Viagens");
+            } catch (error) {
+              console.error('Erro ao navegar:', error);
+            }
+          } else {
+            // Placa já existe e a última viagem não está "Entregue"
+            toast.show({
+              title: 'Erro ao adicionar nova viagem',
+              description: 'Você já possui uma viagem registrada com essa placa. Aguarde ou finalize a viagem existente.',
+              backgroundColor: '#FF2222',
+              fontSize: 'xs',
+            });
+          }
         }
       } else {
-        // Placa já existe, exiba uma mensagem ou realize alguma ação apropriada
+        // Usuário já possui uma viagem em andamento, exiba uma mensagem apropriada
         toast.show({
           title: 'Erro ao adicionar nova viagem',
           description: 'Você já possui uma viagem em andamento. Finalize-a antes de adicionar uma nova.',
@@ -77,7 +132,7 @@ export default function Checkin({ navigation }) {
       console.error('Erro ao salvar viagem no Firebase:', error);
     }
   };
-
+  
   
   const AcessoInfo = async () => {
     if (placa.placa) {

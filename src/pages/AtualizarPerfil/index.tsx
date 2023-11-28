@@ -14,6 +14,33 @@ import { SelectList } from 'react-native-dropdown-select-list';
 import { Platform } from 'react-native/Libraries/Utilities/Platform';
 import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
 
+const formatarTelefone = (input) => {
+  // Remove todos os não dígitos
+  const cleaned = input.replace(/\D/g, '');
+
+  if (cleaned.length <= 11) {
+    let formattedNumber = `(${cleaned.slice(0, 2)})`;
+
+    if (cleaned.length > 2) {
+      formattedNumber += `-${cleaned.slice(2, 3)}`;
+
+      if (cleaned.length > 3) {
+        formattedNumber += `-${cleaned.slice(3, 7)}`;
+
+        if (cleaned.length > 7) {
+          formattedNumber += `-${cleaned.slice(7, 11)}`;
+        }
+      }
+    }
+
+    return formattedNumber;
+  }
+
+  // Se houver mais de 11 dígitos, retorna apenas os primeiros 11
+  return cleaned.slice(0, 11);
+};
+
+
   export default function AtualizarPerfil({ navigation }) {
     const [nome, setNome] = useState('');
     const [telefone, setTelefone] = useState('');
@@ -25,6 +52,10 @@ import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
     const [ placa, setPlaca] = useState('');
     const [perfil , setPerfil] = useState('Motorista');
     const AtualizarDadosPerfil = async() => {
+      
+      
+      
+      
       try {
         // Obtenha o usuário atual
         const user = auth.currentUser;
@@ -54,7 +85,7 @@ import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
           });
           return; // Não avance para a próxima tela se o nome estiver vazio
         }
-
+        
         
         // Verificando se a transportadora esá vazia 
         if(transportadora.trim() === '') {
@@ -119,9 +150,11 @@ import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
       fetchTransportadoras();
     }, []); // O array de dependências vazio garante que este efeito ocorra apenas uma vez ao montar o componente
   
+
     useEffect(() => {
       setData(transportadoras.map(({ id, NomeTransportadora }) => ({ key: id, value: NomeTransportadora })));
     }, [transportadoras]);
+
 
 
     return(
@@ -145,13 +178,12 @@ import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
                 value={nome}       
                 />
 
-                <EntradaTextoNumeros 
+              <EntradaTextoNumeros 
                 label='Telefone:'
                 placeholder='Informe o telefone'
-                onChange={(text) => setTelefone(text)}
+                onChange={(text) => setTelefone(formatarTelefone(text))}
                 value={telefone} 
-                
-                />
+              />
 
 
                 <EntradaTexto 

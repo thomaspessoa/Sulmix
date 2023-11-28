@@ -22,6 +22,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { StyleSheet } from "react-native/Libraries/StyleSheet/StyleSheet";
 import { KeyboardAvoidingView } from "native-base";
 
+
 export default function Cadastro({ navigation }) {
 
 
@@ -133,18 +134,22 @@ export default function Cadastro({ navigation }) {
 
       </Box>
 
-      <Button
-      onPress={() => CadastroFirebase() }
-        w={"100%"}
-        height={"10%"}
-        bgColor={"#F6821F"}
-        mt={10}
-        borderRadius={"lg"}
-        shadow={"7"}
-        alignSelf={"center"}
-      >
-        Registrar
-      </Button>
+      <TouchableOpacity
+  onPress={CadastroFirebase}
+  style={{
+    width: "100%",
+    height: '10%',
+    backgroundColor: "#F6821F",
+    marginTop: '10%',
+    borderRadius: 10,
+    shadowOpacity: 0.43,
+    alignSelf: 'center',
+    justifyContent: 'center',  
+    alignItems: 'center',  
+  }}
+>
+  <Text style={{ color: 'white'}}>Registrar</Text>
+</TouchableOpacity>
 
       <Text
         onPress={() => navigation.goBack()}

@@ -7,7 +7,6 @@ interface CardProps {
     transportadora: string;
     funcao: string;
     data? : string,
-    foiEntregue : string,
     noDestino: string
 }
 
@@ -18,7 +17,7 @@ export function CardPerfil({
     transportadora,
     funcao,
     data,
-    foiEntregue,
+
     noDestino
 
 }:CardProps) { 

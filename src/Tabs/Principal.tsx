@@ -1,34 +1,51 @@
-import { Text,ScrollView,Box,Button, VStack,Image,Divider,Alert} from 'native-base'
-import { CardInicio } from '../componentes/CardInicio'
-import { CardAcessoInicio } from '../componentes/CardAcessoInicio'
-import Logo from '../assets/logo.png'
+import React, { useEffect, useState } from 'react';
+import { ScrollView, VStack, Image, Divider, Button } from 'native-base';
+import { CardInicio } from '../componentes/CardInicio';
+import { CardAcessoInicio } from '../componentes/CardAcessoInicio';
+import Logo from '../assets/logo.png';
 import { TouchableOpacity } from 'react-native';
+import { getDoc, doc, getFirestore } from 'firebase/firestore';
+import { app } from '../config/firebaseConfig';
 
-export default function Principal({navigation}){
-    
+export default function Principal({ navigation }) {
+  const [usuario, setUsuario] = useState(null);
 
-    
-    function PrincipalScreen() {
+  useEffect(() => {
+    // Função para buscar dados do usuário no Firebase
+    async function buscarDadosUsuario() {
+      const firestore = getFirestore(app);
+      const usuarioRef = doc(firestore, 'Usuario', 'PJBoAEz23hOdkybtd1ZCxJqwNWG2');
+
+      try {
+        const snapshot = await getDoc(usuarioRef);
+        if (snapshot.exists()) {
+          const dadosUsuario = snapshot.data();
+          setUsuario(dadosUsuario);
+        } else {
+          console.log('Documento não encontrado');
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
     }
-    return(
-        
-        <ScrollView flex={1} p={1} bg={'#DDECFF'} marginTop={'-8%'}>    
-        
-            <VStack>
-            <Image source={Logo} alt='Logo Sulmix' alignSelf={'center'} size={'190'}/>
-            </VStack>
-            
-            <CardInicio 
-            nome='Nome'
-            transportadora='Transportadora'
-            funcao='Motorista'
-            foto='https://i.pinimg.com/originals/a6/de/6d/a6de6d457bc4da659f18b435dd68992e.png'
-            />
+
+    buscarDadosUsuario();
+  }, []);
+
+
+
+
+  
+  return (
+    <ScrollView flex={1} p={1} bg={'#DDECFF'} >
+      <VStack top={'-3%'}>
+            <Image source={Logo} alt='Logo Sulmix' alignSelf={'center'} h={225} w={225} />
+        </VStack>
 
             <Divider 
-            mt={4}
+            mt={2}
             bg={'yellow.900'}
-            top={'-30'}
+            top={'-8%'}
             />
     
             <TouchableOpacity

@@ -42,77 +42,62 @@ export default function Login({ navigation }) {
 
 
 
-  const loginFirebase= async () => {
-
-  //const { user, setUser} = useContext(AuthContext);
-
-    
-
-    // Está realizando o processo de autenticação de um usuário no Firebase 
-    signInWithEmailAndPassword(auth, email, senha)
-      .then(async (userCredential) => {
-        const user = userCredential.user;
-
-        // Verifique se o usuário atualizou o perfil
-        if (user.displayName) {
-
-
-          // O usuário já atualizou o perfil, navegue até a página de abas (Tabs)
-          setLoginSuccess(true);
-          navigation.navigate('SplashScreenCarregamento');
+  const loginFirebase = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      const user = userCredential.user;
   
-
-          // Toast de Login Realizado 
-          toast.show({
-            title: 'Login Realizado!',
-            backgroundColor: '#0EDF23',
-            fontSize: 'xs',
-          });
-
-
-          
-        } else {
-
-          // O usuário ainda não atualizou o perfil, navegue até a página de atualização do perfil
-          setLoginSuccess(true);
-          navigation.navigate('AtualizarPerfil');
+      // Consulte o Firestore para obter informações adicionais do usuário
+      const userDoc = await getDoc(doc(db, 'Usuario', user.uid)); // Certifique-se de que a coleção é 'Usuarios' (ou ajuste conforme necessário)
+      const userData = userDoc.data();
   
-          toast.show({
-            title: 'Login Realizado! Por favor, atualize seu perfil.',
-            backgroundColor: '#0EDF23',
-            fontSize: 'xs',
-          });
-        }
-      })
-
-
-      // Erros Do Usuario
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+      if (userData && userData.telefone) {
+        // O usuário já tem um telefone cadastrado, navegue até a página desejada (por exemplo, 'Home')
+        setLoginSuccess(true);
+        navigation.navigate('Tabs');
   
-        if (errorCode === 'auth/invalid-email') {
-          console.log('Email inválido');
-          toast.show({
-            title: 'Email inválido!',
-            backgroundColor: '#FF2222',
-            fontSize: 'xs',
-          });
-        }
+        // Toast de Login Realizado
+        toast.show({
+          title: 'Login Realizado!',
+          backgroundColor: '#0EDF23',
+          fontSize: 'xs',
+        });
+      } else {
+        // O usuário não tem um telefone cadastrado, navegue até a página de atualização do perfil
+        setLoginSuccess(true);
+        navigation.navigate('AtualizarPerfil');
   
-        if (errorCode === 'auth/invalid-login-credentials') {
-          console.log('Senha incorreta');
-          toast.show({
-            title: 'Senha incorreta. Tente novamente!',
-            backgroundColor: '#FF2222',
-            fontSize: 'xs',
-          });
-        }
+        toast.show({
+          title: 'Login Realizado! Por favor, atualize seu perfil.',
+          backgroundColor: '#0EDF23',
+          fontSize: 'xs',
+        });
+      }
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
   
-        console.log(errorMessage);
-      });
+      if (errorCode === 'auth/invalid-email') {
+        console.log('Email inválido');
+        toast.show({
+          title: 'Email inválido!',
+          backgroundColor: '#FF2222',
+          fontSize: 'xs',
+        });
+      }
+  
+      if (errorCode === 'auth/invalid-login-credentials') {
+        console.log('Senha incorreta');
+        toast.show({
+          title: 'Senha incorreta. Tente novamente!',
+          backgroundColor: '#FF2222',
+          fontSize: 'xs',
+        });
+      }
+  
+      console.log(errorMessage);
+    }
   };
-
 
 
   

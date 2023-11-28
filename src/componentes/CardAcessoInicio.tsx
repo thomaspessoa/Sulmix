@@ -13,7 +13,7 @@ export function CardAcessoInicio ({
 }: CardAcessoInicio) {
 
     return ( 
-        <VStack left={'2'} w={'96%'} bg={'#B7D7FF'} borderRadius={'xl'} p={2} shadow={'5'} mt={5} borderColor={'#1E83FC'} borderWidth={'1'} top={'-24'} >
+        <VStack left={'2'} w={'96%'} bg={'#B7D7FF'} borderRadius={'xl'} p={2} shadow={'5'} mt={5} borderColor={'#1E83FC'} borderWidth={'1'} top={'-40%'} >
 
             <VStack alignItems={'center'}>         
             <Ionicons name={icone} size={33} color={'#F6821F'}  />          
