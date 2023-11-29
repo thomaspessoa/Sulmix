@@ -8,7 +8,6 @@ interface CardHistoricoProps {
   foiEntregue: boolean;
   emAndamento: boolean;
   status: string;
-  icone: string;
   horario: string;
   placa: string;
 }
@@ -21,7 +20,6 @@ export function CardHistorico({
   foiEntregue,
   emAndamento,
   status,
-  icone,
   horario,
   placa,
 }: CardHistoricoProps) {

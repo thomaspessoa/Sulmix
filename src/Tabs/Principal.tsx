@@ -6,6 +6,7 @@ import Logo from '../assets/logo.png';
 import { TouchableOpacity } from 'react-native';
 import { getDoc, doc, getFirestore } from 'firebase/firestore';
 import { app } from '../config/firebaseConfig';
+import { auth } from '../config/firebaseConfig';
 
 export default function Principal({ navigation }) {
   const [usuario, setUsuario] = useState(null);
@@ -14,25 +15,42 @@ export default function Principal({ navigation }) {
     // Função para buscar dados do usuário no Firebase
     async function buscarDadosUsuario() {
       const firestore = getFirestore(app);
-      const usuarioRef = doc(firestore, 'Usuario', 'PJBoAEz23hOdkybtd1ZCxJqwNWG2');
 
-      try {
-        const snapshot = await getDoc(usuarioRef);
-        if (snapshot.exists()) {
-          const dadosUsuario = snapshot.data();
-          setUsuario(dadosUsuario);
-        } else {
-          console.log('Documento não encontrado');
+      // Obtenha o usuário atualmente autenticado
+      const usuarioAtual = auth.currentUser;
+
+      // Verifique se há um usuário autenticado antes de continuar
+      if (usuarioAtual) {
+        const usuarioRef = doc(firestore, 'Usuario', usuarioAtual.uid);
+
+        try {
+          const snapshot = await getDoc(usuarioRef);
+          if (snapshot.exists()) {
+            const dadosUsuario = snapshot.data();
+            console.log('Dados do usuário:', dadosUsuario);
+            setUsuario(dadosUsuario);
+          } else {
+            console.log('Documento não encontrado');
+          }
+        } catch (error) {
+          console.error('Erro ao buscar dados do usuário:', error);
         }
-      } catch (error) {
-        console.error('Erro ao buscar dados do usuário:', error);
+      } else {
+        console.log('Nenhum usuário autenticado');
       }
     }
 
     buscarDadosUsuario();
   }, []);
 
-
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
 
 
   
@@ -48,6 +66,7 @@ export default function Principal({ navigation }) {
             top={'-8%'}
             />
     
+          {usuario && usuario.perfil === 'Administrador' && (   
             <TouchableOpacity
              activeOpacity={0.6}
              > 
@@ -56,18 +75,22 @@ export default function Principal({ navigation }) {
             icone='stats-chart'
             />
             </TouchableOpacity>
+)}
 
-            
+
+            {usuario && usuario.perfil === 'Administrador' && (
             <TouchableOpacity
-                onPress={() => navigation.navigate('CadastroUsuarios')}
-                activeOpacity={0.6}
+              onPress={() => navigation.navigate('CadastroUsuarios')}
+              activeOpacity={0.6}
             >
-            <CardAcessoInicio 
-            nome='Cadastro de usuários'
-            icone='person-add'
-            />
+              <CardAcessoInicio nome='Cadastro de usuários' icone='person-add' />
             </TouchableOpacity>
+          )}
 
+
+          {usuario && usuario.perfil === 'Motorista' && (
+
+          
             <TouchableOpacity
                 onPress={() => navigation.navigate('Checkin')}
                 activeOpacity={0.6}
@@ -77,8 +100,12 @@ export default function Principal({ navigation }) {
             icone='calendar'
             />
             </TouchableOpacity>
-           
-           
+           )}
+
+
+           {usuario && usuario.perfil === 'Motorista' && (
+
+          
             <TouchableOpacity 
             onPress={() => navigation.navigate('Minhas Viagens')}
             activeOpacity={0.6}  
@@ -88,19 +115,10 @@ export default function Principal({ navigation }) {
             icone='ribbon'
             />
             </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => navigation.navigate('Coletas')}>
-            <CardAcessoInicio      
-            nome='Coletas'
-            icone='archive'
-            />
-            </TouchableOpacity>
+          )}
 
 
-
-
-
-            <Button  onPress={() => navigation.navigate("Login")} 
+            <Button  onPress={handleLogout}
             left={2}
             w={'96%'}
             bg={'#F56161'}

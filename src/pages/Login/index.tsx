@@ -29,6 +29,18 @@ import SplashScreenCarregamento from "../SplashScreenCarregamento";
 import { auth } from "../../config/firebaseConfig";
 import { AuthContext } from "../../contexts/authContext";
 import React, { useContext } from 'react';
+import { PermissionsAndroid } from 'react-native';
+import { collection, addDoc } from "firebase/firestore";
+
+
+import {
+  requestForegroundPermissionsAsync,
+  getCurrentPositionAsync,
+  LocationObject,
+  watchPositionAsync,
+  LocationAccuracy,
+} from 'expo-location';
+
 
 
 export default function Login({ navigation }) {
@@ -37,36 +49,39 @@ export default function Login({ navigation }) {
   const toast = useToast()
   const [loginSuccess, setLoginSuccess] = useState(false);
   const db = getFirestore(app);
-
+  const [location, setLocation] = useState<LocationObject | null>(null);
   const [user, setUser] = useState();
-
 
 
   const loginFirebase = async () => {
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        senha
+      );
       const user = userCredential.user;
-  
-      // Consulte o Firestore para obter informações adicionais do usuário
-      const userDoc = await getDoc(doc(db, 'Usuario', user.uid)); // Certifique-se de que a coleção é 'Usuarios' (ou ajuste conforme necessário)
+
+      // Consulta o Firestore para obter informações adicionais do usuário
+      const userDoc = await getDoc(doc(db, 'Usuario', user.uid));
       const userData = userDoc.data();
-  
+
       if (userData && userData.telefone) {
-        // O usuário já tem um telefone cadastrado, navegue até a página desejada (por exemplo, 'Home')
+        // O usuário já tem um número de telefone registrado, navegue até a página desejada (por exemplo, 'Home')
         setLoginSuccess(true);
-        navigation.navigate('Tabs');
-  
-        // Toast de Login Realizado
+        navigation.navigate('SplashScreenCarregamento');
+
+        // Toast de login realizado com sucesso
         toast.show({
           title: 'Login Realizado!',
           backgroundColor: '#0EDF23',
           fontSize: 'xs',
         });
       } else {
-        // O usuário não tem um telefone cadastrado, navegue até a página de atualização do perfil
+        // O usuário não tem um número de telefone registrado, navegue até a página de atualização do perfil
         setLoginSuccess(true);
         navigation.navigate('AtualizarPerfil');
-  
+
         toast.show({
           title: 'Login Realizado! Por favor, atualize seu perfil.',
           backgroundColor: '#0EDF23',
@@ -76,16 +91,16 @@ export default function Login({ navigation }) {
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
-  
+
       if (errorCode === 'auth/invalid-email') {
-        console.log('Email inválido');
+        console.log('E-mail inválido');
         toast.show({
-          title: 'Email inválido!',
+          title: 'E-mail inválido!',
           backgroundColor: '#FF2222',
           fontSize: 'xs',
         });
       }
-  
+
       if (errorCode === 'auth/invalid-login-credentials') {
         console.log('Senha incorreta');
         toast.show({
@@ -94,7 +109,7 @@ export default function Login({ navigation }) {
           fontSize: 'xs',
         });
       }
-  
+
       console.log(errorMessage);
     }
   };
@@ -135,23 +150,24 @@ return (
       </Box>
 
        
-<TouchableOpacity
-  onPress={loginFirebase}
-  style={{
-    width: "100%",
-    height: '8.25%',
-    backgroundColor: "#F6821F",
-    marginTop: '10%',
-    borderRadius: 10,
-    shadowOpacity: 0.43,
-    alignSelf: 'center',
-    justifyContent: 'center',  
-    alignItems: 'center',  
-  }}
->
-  <Text style={{ color: 'white'}}>Entrar</Text>
-</TouchableOpacity>
+        <TouchableOpacity
+          onPress={loginFirebase}
+          style={{
+            width: "100%",
+            height: '8.25%',
+            backgroundColor: "#F6821F",
+            marginTop: '10%',
+            borderRadius: 10,
+            shadowOpacity: 0.43,
+            alignSelf: 'center',
+            justifyContent: 'center',  
+            alignItems: 'center',  
+          }}
+        >
+          <Text style={{ color: 'white'}}>Entrar</Text>
+        </TouchableOpacity>
       
+
       <Box w={"100%"} flexDirection={"row"} justifyContent={"center"} mt={8}>
         <Text fontWeight={"semibold"}>Ainda não tem conta ? </Text>
         <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>

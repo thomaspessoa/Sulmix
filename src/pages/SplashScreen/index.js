@@ -14,7 +14,7 @@ export default function SplashScreen({ navigation }) {
                 index: 0,
                 routes: [{ name: 'Login' }],
             });
-        }, 2000); // Ajuste o tempo em milissegundos conforme necessário
+        }, 1900); // Ajuste o tempo em milissegundos conforme necessário
     };
 
     useEffect(() => {

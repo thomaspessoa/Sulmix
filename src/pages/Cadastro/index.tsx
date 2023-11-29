@@ -121,7 +121,17 @@ export default function Cadastro({ navigation }) {
           onChange={(text) => setSenha(text)}
           value={senha}
    
-        /> 
+        />  
+         {senha.length > 0 && senha.length < 7 && (
+          <Text
+            fontSize="xs"
+            color="#FF2222"
+            textAlign="left"
+            mb={2}
+          >
+            * A senha deve ter 6 caracteres ou mais.
+          </Text>
+        )}
 
         <EntradaTextoSenha
           label="Confirme a senha: "
@@ -130,6 +140,16 @@ export default function Cadastro({ navigation }) {
           value={confirmeSenha}
         />
 
+         {confirmeSenha.length > 0 && confirmeSenha.length < 7 && (
+          <Text
+            fontSize="xs"
+            color="#FF2222"
+            textAlign="left"
+            mb={2}
+          >
+           * Mantenha as senhas iguais.
+          </Text>
+        )}
    
 
       </Box>

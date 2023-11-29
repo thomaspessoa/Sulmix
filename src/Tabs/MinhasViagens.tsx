@@ -8,6 +8,8 @@ import Logo from '../assets/logo.png';
 import { CardHistorico } from '../componentes/CardHistorico';
 import { Titulo } from '../componentes/Titulo';
 
+
+
 const MinhasViagens = ({ route, navigation }) => {
   const [viagens, setViagens] = useState([]);
   const [usuarioAtual, setUsuarioAtual] = useState(null);
@@ -87,5 +89,7 @@ const MinhasViagens = ({ route, navigation }) => {
     </ScrollView>
   );
 };
+ 
+  
 
 export default MinhasViagens;

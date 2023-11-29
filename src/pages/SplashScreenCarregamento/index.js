@@ -14,7 +14,7 @@ export default function SplashScreenCarregamento({ navigation }) {
                 index: 0,
                 routes: [{ name: 'Tabs' }],
             });
-        }, 1600); // Ajuste o tempo em milissegundos conforme necessário
+        }, 1500); // Ajuste o tempo em milissegundos conforme necessário
     };
 
     useEffect(() => {

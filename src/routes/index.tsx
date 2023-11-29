@@ -51,7 +51,6 @@ export default function Rotas() {
                 />
 
 
-
                 <Tab.Screen 
                     name="Checkin" component={Checkin} options={{headerShown: false}}
                 />
