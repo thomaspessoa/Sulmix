@@ -4,11 +4,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
 import { useToast } from 'native-base';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native';  // Importe o useFocusEffect do pacote correto
 import Logo from '../assets/logo.png';
 import { CardHistorico } from '../componentes/CardHistorico';
 import { Titulo } from '../componentes/Titulo';
-
-
 
 const MinhasViagens = ({ route, navigation }) => {
   const [viagens, setViagens] = useState([]);
@@ -25,28 +24,31 @@ const MinhasViagens = ({ route, navigation }) => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const carregarViagensSalvas = async () => {
-      try {
-        if (usuarioAtual) {
-          const firestore = getFirestore();
-          const viagensRef = collection(firestore, 'Viagens');
-          const querySnapshot = await getDocs(
-            query(viagensRef, where('uid', '==', usuarioAtual.uid))
-          );
+  // Utilize useFocusEffect para recarregar os dados quando a tela é focada
+  useFocusEffect(
+    React.useCallback(() => {  // Certifique-se de importar o useCallback do React corretamente
+      const carregarViagensSalvas = async () => {
+        try {
+          if (usuarioAtual) {
+            const firestore = getFirestore();
+            const viagensRef = collection(firestore, 'Viagens');
+            const querySnapshot = await getDocs(
+              query(viagensRef, where('uid', '==', usuarioAtual.uid))
+            );
 
-          const viagensData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-          setViagens(viagensData);
+            const viagensData = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+            setViagens(viagensData);
 
-          await AsyncStorage.setItem('viagens', JSON.stringify(viagensData));
+            await AsyncStorage.setItem('viagens', JSON.stringify(viagensData));
+          }
+        } catch (error) {
+          console.error('Erro ao carregar viagens:', error);
         }
-      } catch (error) {
-        console.error('Erro ao carregar viagens:', error);
-      }
-    };
+      };
 
-    carregarViagensSalvas();
-  }, [usuarioAtual]);
+      carregarViagensSalvas();
+    }, [usuarioAtual])
+  );
 
   const filtrarViagens = () => {
     if (mostrarConcluidas) {
@@ -55,8 +57,6 @@ const MinhasViagens = ({ route, navigation }) => {
       return viagens.filter((viagem) => viagem.status === 'Em Andamento');
     }
   };
-
-
 
   return (
     <ScrollView flex={1} p={1} bg={'#DDECFF'} marginTop={'-5%'}>
@@ -89,7 +89,5 @@ const MinhasViagens = ({ route, navigation }) => {
     </ScrollView>
   );
 };
- 
-  
 
 export default MinhasViagens;

@@ -115,9 +115,6 @@ export default function Login({ navigation }) {
   };
 
 
-  
-   
-
 // Tela Login Sulmix 
   
 return (

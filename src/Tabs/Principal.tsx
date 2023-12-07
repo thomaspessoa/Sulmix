@@ -4,43 +4,72 @@ import { CardInicio } from '../componentes/CardInicio';
 import { CardAcessoInicio } from '../componentes/CardAcessoInicio';
 import Logo from '../assets/logo.png';
 import { TouchableOpacity } from 'react-native';
-import { getDoc, doc, getFirestore } from 'firebase/firestore';
+import { getDoc, doc, getFirestore, updateDoc } from 'firebase/firestore';
 import { app } from '../config/firebaseConfig';
 import { auth } from '../config/firebaseConfig';
+import { requestForegroundPermissionsAsync, getCurrentPositionAsync, LocationAccuracy } from 'expo-location';
 
 export default function Principal({ navigation }) {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    // Função para buscar dados do usuário no Firebase
     async function buscarDadosUsuario() {
       const firestore = getFirestore(app);
-
-      // Obtenha o usuário atualmente autenticado
       const usuarioAtual = auth.currentUser;
 
-      // Verifique se há um usuário autenticado antes de continuar
       if (usuarioAtual) {
         const usuarioRef = doc(firestore, 'Usuario', usuarioAtual.uid);
 
         try {
           const snapshot = await getDoc(usuarioRef);
           if (snapshot.exists()) {
-            const dadosUsuario = snapshot.data();
-            console.log('Dados do usuário:', dadosUsuario);
-            setUsuario(dadosUsuario);
-          } else {
-            console.log('Documento não encontrado');
+            setUsuario(snapshot.data());
           }
         } catch (error) {
           console.error('Erro ao buscar dados do usuário:', error);
         }
-      } else {
-        console.log('Nenhum usuário autenticado');
       }
     }
 
     buscarDadosUsuario();
+  }, []);
+
+  useEffect(() => {
+    const enviarLocalizacaoParaFirebase = async () => {
+      const firestore = getFirestore(app);
+      const usuarioAtual = auth.currentUser;
+
+      if (usuarioAtual) {
+        const usuarioRef = doc(firestore, 'Usuario', usuarioAtual.uid);
+
+        // Obter permissão de localização
+        const { status } = await requestForegroundPermissionsAsync();
+
+        if (status === 'granted') {
+          // Configurar loop de atualização de localização
+          const intervalId = setInterval(async () => {
+            const location = await getCurrentPositionAsync({ accuracy: LocationAccuracy.High });
+
+            // Atualizar localização no Firebase
+            await updateDoc(usuarioRef, {
+              localizacao: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              },
+            });
+
+            console.log('Localização do usuário atualizada:', location.coords.latitude, location.coords.longitude);
+          }, 3600000); // Atualizar a cada 1 minuto
+
+          // Limpar intervalo quando o componente for desmontado
+          return () => clearInterval(intervalId);
+        } else {  
+          console.log('Permissão de localização negada');
+        }
+      }
+    };
+
+    enviarLocalizacaoParaFirebase();
   }, []);
 
   const handleLogout = async () => {

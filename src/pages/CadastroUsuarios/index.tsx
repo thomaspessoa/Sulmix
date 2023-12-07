@@ -10,6 +10,9 @@ import { collection, addDoc } from 'firebase/firestore';
 import { auth, firestore } from '../../config/firebaseConfig';
 import { SelectList } from 'react-native-dropdown-select-list';
 import { EntradaTextoNumeros } from '../../componentes/EntradaTextoNumeros';
+import { setDoc, doc } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore';
+import { app} from '../../config/firebaseConfig'
 
 
 
@@ -39,6 +42,10 @@ const formatarTelefone = (input) => {
   return cleaned.slice(0, 11);
 };
 
+
+
+
+
 export default function CadastroUsuarios({ navigation }) {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -47,6 +54,8 @@ export default function CadastroUsuarios({ navigation }) {
   const [perfil, setPerfil] = useState(null);
   const toast = useToast();
   const [telefone, setTelefone] = useState('');
+  const db = getFirestore(app);
+
 
   const data = [
     { key: '1', value: 'Administrador' },
@@ -57,7 +66,16 @@ export default function CadastroUsuarios({ navigation }) {
   const CadastroFirebase = async () => {
     if (senha !== confirmeSenha) {
       toast.show({
-        title: "( Erro ) Senhas diferentes",
+        title: "Senhas diferentes!",
+        backgroundColor: "#FF2222",
+        fontSize: "xs"
+      });
+      return;
+    }
+
+    if (senha.length < 6) {
+      toast.show({
+        title: "A senha deve ter pelo menos 6 caracteres!",
         backgroundColor: "#FF2222",
         fontSize: "xs"
       });
@@ -66,7 +84,7 @@ export default function CadastroUsuarios({ navigation }) {
 
     if (nome === '') {
       toast.show({
-        title: "( Erro ) Insira algum nome  ",
+        title: "Insira algum nome!",
         backgroundColor: "#FF2222",
         fontSize: "xs"
       });
@@ -75,7 +93,7 @@ export default function CadastroUsuarios({ navigation }) {
 
     if (email === '') {
       toast.show({
-        title: "( Erro ) Email Vazio  ",
+        title: "Email vazio!",
         backgroundColor: "#FF2222",
         fontSize: "xs"
       });
@@ -84,7 +102,7 @@ export default function CadastroUsuarios({ navigation }) {
 
     if (perfil === null) {
       toast.show({
-        title: "( Erro ) Selecione um Perfil  ",
+        title: "Selecione um Perfil!",
         backgroundColor: "#FF2222",
         fontSize: "xs"
       });
@@ -93,7 +111,7 @@ export default function CadastroUsuarios({ navigation }) {
 
     if (!telefone || telefone.replace(/\D/g, '').length !== 11) {
       toast.show({
-        title: "( Erro ) Número de telefone inválido",
+        title: "Número de telefone inválido!",
         backgroundColor: "#FF2222",
         fontSize: "xs",
       });
@@ -105,17 +123,18 @@ export default function CadastroUsuarios({ navigation }) {
       const user = userCredential.user;
 
       const usuarioData = {
+  
         nome: nome,
         email: email,
         perfil: perfil,
         telefone: telefone,
       };
 
-      const docRef = await addDoc(collection(firestore, 'Usuario'), usuarioData);
+      const docRef = await setDoc(doc(db, 'Usuario', user.uid), usuarioData);
 
       navigation.navigate("Tabs");
       toast.show({
-        title: "Conta Cadastrada!",
+        title: "Conta Cadastrada!", 
         backgroundColor: "#0EDF23",
         fontSize: "xs"
       });
@@ -143,7 +162,6 @@ export default function CadastroUsuarios({ navigation }) {
       }
     }
   };
-
 
   return (
     <KeyboardAvoidingView flex={1} p={2} behavior='padding' keyboardVerticalOffset={2}>
@@ -173,11 +191,11 @@ export default function CadastroUsuarios({ navigation }) {
         />
 
         <EntradaTextoNumeros 
-                label='Telefone:'
-                placeholder='Informe o telefone'
-                onChange={(text) => setTelefone(formatarTelefone(text))}
-                value={telefone} 
-              />
+          label='Telefone:'
+          placeholder='Informe o telefone'
+          onChange={(text) => setTelefone(formatarTelefone(text))}
+          value={telefone} 
+        />
 
         <EntradaTextoSenha
           secureTextEntry={true}

@@ -1,8 +1,16 @@
-import { Text, Box, VStack, Input, Button, useToast } from 'native-base';
+import {
+  Text,
+  Box,
+  VStack,
+  Input,
+  Button,
+  useToast,
+  KeyboardAvoidingView,
+  ScrollView,
+} from 'native-base';
 import { Titulo } from '../../componentes/Titulo';
 import { EntradaTexto } from '../../componentes/EntradaTexto';
-import { useState } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useState, useEffect } from 'react';
 import {
   getFirestore,
   doc,
@@ -14,15 +22,16 @@ import {
   getDocs,
 } from 'firebase/firestore';
 import { app, auth } from '../../config/firebaseConfig';
-import { KeyboardAvoidingView } from 'native-base';
-import { Platform, ScrollView } from 'react-native';
+import { requestForegroundPermissionsAsync, watchPositionAsync, LocationAccuracy } from 'expo-location';
 import { format } from 'date-fns';
-
+import { Platform } from 'react-native';
 
 
 
 export default function Checkin({ navigation }) {
   const [placa, setPlaca] = useState({ placa: '' });
+  const [location, setLocation] = useState(null);
+  const [watchPositionSubscription, setWatchPositionSubscription] = useState(null);
   const toast = useToast();
 
   const AlterText = (event, type) => {
@@ -33,7 +42,7 @@ export default function Checkin({ navigation }) {
     try {
       const firestore = getFirestore();
       const colecaoViagens = collection(firestore, 'Viagens');
-  
+
       // Verifica se o usuário já possui uma viagem em andamento
       const viagemAtualSnapshot = await getDocs(
         query(
@@ -42,11 +51,11 @@ export default function Checkin({ navigation }) {
           where('status', '==', 'Em Andamento')
         )
       );
-  
+
       if (viagemAtualSnapshot.size === 0) {
         // Usuário não possui uma viagem em andamento, pode adicionar uma nova
         const querySnapshot = await getDocs(query(colecaoViagens, where('placa', '==', placa.placa)));
-  
+
         if (querySnapshot.size === 0) {
           // Placa não existe, pode adicionar uma nova viagem
           const dataAtual = new Date();
@@ -58,28 +67,30 @@ export default function Checkin({ navigation }) {
             data: format(dataAtual, 'dd/MM/yyyy'),
             horario: format(dataAtual, 'HH:mm:ss'),
             uid: usuario.uid,
+            latitude: location?.coords.latitude || null,
+            longitude: location?.coords.longitude || null,
           };
-  
+
           const novaViagemRef = await addDoc(colecaoViagens, dadosViagem);
-  
+
           console.log('Viagem adicionada com sucesso:', novaViagemRef.id);
-  
+
           toast.show({
             title: 'Check-in Feito com Sucesso!',
             backgroundColor: '#0EDF23',
             fontSize: 'xs',
           });
-  
+
           // Execute outras ações ou navegação conforme necessário
           try {
-            await navigation.navigate("Minhas Viagens");
+            await navigation.navigate('Minhas Viagens');
           } catch (error) {
             console.error('Erro ao navegar:', error);
           }
         } else {
           // Placa já existe, verificar status da última viagem
           const ultimaViagem = querySnapshot.docs[0].data();
-  
+
           if (ultimaViagem.status === 'Entregue') {
             // Status da última viagem é "Entregue", permitir criar uma nova viagem
             const dataAtual = new Date();
@@ -91,21 +102,23 @@ export default function Checkin({ navigation }) {
               data: format(dataAtual, 'dd/MM/yyyy'),
               horario: format(dataAtual, 'HH:mm:ss'),
               uid: usuario.uid,
+              latitude: location?.coords.latitude || null,
+              longitude: location?.coords.longitude || null,
             };
-  
+
             const novaViagemRef = await addDoc(colecaoViagens, dadosViagem);
-  
+
             console.log('Viagem adicionada com sucesso:', novaViagemRef.id);
-  
+
             toast.show({
               title: 'Check-in Feito com Sucesso!',
               backgroundColor: '#0EDF23',
               fontSize: 'xs',
             });
-  
+
             // Execute outras ações ou navegação conforme necessário
             try {
-              await navigation.navigate("Minhas Viagens");
+              await navigation.navigate('Minhas Viagens');
             } catch (error) {
               console.error('Erro ao navegar:', error);
             }
@@ -132,8 +145,7 @@ export default function Checkin({ navigation }) {
       console.error('Erro ao salvar viagem no Firebase:', error);
     }
   };
-  
-  
+
   const AcessoInfo = async () => {
     if (placa.placa) {
       const usuarioAtual = auth.currentUser;
@@ -158,6 +170,7 @@ export default function Checkin({ navigation }) {
               fontSize: 'xs',
             });
           }
+       
         } else {
           console.log('Documento do usuário não encontrado no Firestore');
         }
@@ -173,7 +186,39 @@ export default function Checkin({ navigation }) {
     }
   };
 
+  useEffect(() => {
+    const startLocationTracking = async () => {
+      try {
+        const { status } = await requestForegroundPermissionsAsync();
+    
+        if (status === 'granted') {
+          const options = {
+            accuracy: LocationAccuracy.High,
+            timeInterval: 5000, // Alterado para 5 segundos
+          };
+    
+          const subscription = await watchPositionAsync(options, (newLocation) => {
+            setLocation(newLocation);
+          });
+    
+          setWatchPositionSubscription(subscription);
+        } else {
+          console.log('Permissão de localização negada');
+        }
+      } catch (error) {
+        console.error('Erro ao iniciar o rastreamento de localização:', error);
+      }
+    };
+  
 
+    startLocationTracking();
+
+    return () => {
+      if (watchPositionSubscription) {
+        watchPositionSubscription.remove();
+      }
+    };
+  }, []);
 
   return (
     <KeyboardAvoidingView
@@ -209,3 +254,4 @@ export default function Checkin({ navigation }) {
     </KeyboardAvoidingView>
   );
 }
+
